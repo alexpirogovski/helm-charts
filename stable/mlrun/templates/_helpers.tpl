@@ -383,7 +383,13 @@ Create the name of the service account to use
 Resolve the effective docker registry url and secret Name allowing for global values
 */}}
 {{- define "mlrun.defaultDockerRegistry.url" -}}
-{{ coalesce .Values.defaultDockerRegistryURL .Values.global.registry.url }}
+{{- if eq .Values.global.registry.url "local" -}}
+{{ .Values.global.externalHostAddress }}:30030
+{{- else if .Values.defaultDockerRegistryURL -}}
+{{ .Values.defaultDockerRegistryURL }}
+{{- else -}}
+{{ .Values.global.registry.url }}
+{{- end -}}
 {{- end -}}
 
 {{- define "mlrun.defaultDockerRegistry.builderSecretName" -}}
